@@ -72,9 +72,10 @@ function App() {
             />
             <button type='submit' className=' add-btn'>
               <MdEdit />
-              {/* {editing ? 'Edit' : 'Add'} */}
+              {editing ? 'Edit' : 'Add'}
             </button>
           </div>
+          <div className='underline'></div>
         </form>
         {list.length > 0 && (
           <div className='list-container'>
