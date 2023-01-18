@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import './App.css';
 import List from './List';
 import { MdEdit } from 'react-icons/md';
+import Alert from './Alert';
 
 function App() {
   const [input, setInput] = useState('');
@@ -10,14 +11,21 @@ function App() {
   );
   const [editing, setEditing] = useState(false);
   const [editId, setEditId] = useState(null);
+  const [alert, setAlert] = useState({
+    show: false,
+    msg: '',
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     if (!input) {
+      // display alert
+      showAlert(true, 'Please enter a valid value');
       setList([...list]);
     } else if (input && editing) {
       // editing an item
+      showAlert(true, 'Item has been edited');
       setList(
         list.map((item) => {
           if (item.id === editId) {
@@ -30,6 +38,7 @@ function App() {
       setEditId(null);
       setEditing(false);
     } else {
+      showAlert(true, `${input} added to your list`);
       const newItem = {
         id: Math.floor(Math.random() * 1000),
         name: input,
@@ -40,11 +49,14 @@ function App() {
   };
 
   const clearList = () => {
+    showAlert(true, 'All items have been deleted');
     setList([]);
+    setInput('');
   };
 
   const deleteItem = (id) => {
     setList(list.filter((item) => item.id !== id));
+    showAlert(true, 'Item has been deleted');
   };
 
   const updateItem = (id) => {
@@ -54,6 +66,10 @@ function App() {
     setInput(editItem.name);
   };
 
+  const showAlert = (show = false, msg = '') => {
+    setAlert({ show, msg });
+  };
+
   useEffect(() => {
     localStorage.setItem('list', JSON.stringify(list));
   }, [list]);
@@ -61,6 +77,7 @@ function App() {
   return (
     <main className='hero'>
       <section className='container'>
+        {alert.show && <Alert {...alert} removeAlert={showAlert} list={list} />}
         <h1>Shopping List</h1>
         <form className='shopping-form' onSubmit={handleSubmit}>
           <div className='form-control'>
